@@ -5,7 +5,7 @@
       <div class="timer-label">{{ formatTime(remainingTime) }}</div>
     </div>
     <div class="control">
-      <button class="start-btn" :disabled="isTimerunning" @click="startTimer()">
+      <button class="start-btn" @click="startTimer()">
         {{ Textbtn }}
       </button>
       <button class="pause-btn" @click="pauseTimer()">Pause</button>
@@ -40,27 +40,27 @@ export default {
   },
   methods: {
     startTimer() {
-      if (!this.timerRunning) {
-        this.timerRunning = true;
+      if (!this.isTimerunning) {
+        this.isTimerunning = true;
         this.timerInterval = setInterval(() => {
           this.remainingTime--;
           if (this.remainingTime === 0) {
             clearInterval(this.timerInterval);
-            this.timerRunning = false;
+            this.isTimerunning = false;
           }
         }, 1000);
       }
     },
 
     pauseTimer() {
-      clearInterval(this.timerInterval);
       this.isTimerunning = false;
+      clearInterval(this.timerInterval);
     },
 
     resetTimer() {
       clearInterval(this.timerInterval);
-      this.remainingTime = this.duration;
       this.isTimerunning = false;
+      this.remainingTime = this.duration;
     },
 
     checkMode(mode) {
