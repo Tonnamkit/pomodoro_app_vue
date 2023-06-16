@@ -27,9 +27,13 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  
+  align-items: center;
+  border-radius: 12px;
+  margin-bottom: 12px;
+   border-style: solid;
 }
 #nav_contaniner > div{
   margin: 20px;
+  
 }
 </style>

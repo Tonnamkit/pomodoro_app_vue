@@ -1,29 +1,36 @@
 <template>
   <div class="timer">
     <div class="timer-circle" :style="circleStyle">
+      <CircleProgress :progress="progress" />
       <div class="timer-label">{{ formatTime(remainingTime) }}</div>
     </div>
     <div class="control">
-      <button class="start" @click="startTimer()">Start</button>
-      <button class="pause" @click="pauseTimer()">Pause</button>
-      <button class="reset" @click="resetTimer()">Reset</button>
+      <button class="start-btn" :disabled="isTimerunning" @click="startTimer()">
+        {{ Textbtn }}
+      </button>
+      <button class="pause-btn" @click="pauseTimer()">Pause</button>
+      <button class="reset-btn" @click="resetTimer()">Reset</button>
     </div>
   </div>
 </template>
 
 <script>
+import CircleProgress from "../CircleProgress.vue";
 import nav_bar from "./Navbar.vue";
+
 export default {
   name: "Timer_UI",
   props: ["mode"],
   components() {
-    nav_bar;
+    nav_bar, CircleProgress;
   },
   data() {
     return {
       duration: 1500,
       remainingTime: 1500,
       timerInterval: null,
+      Textbtn: "Start",
+      isTimerunning: false,
     };
   },
   watch: {
@@ -33,22 +40,27 @@ export default {
   },
   methods: {
     startTimer() {
-      this.timerInterval = setInterval(() => {
-        this.remainingTime--;
-        if (this.remainingTime === 0) {
-          // Handle Pomodoro session completion
-          clearInterval(this.timerInterval);
-        }
-      }, 1000);
+      if (!this.timerRunning) {
+        this.timerRunning = true;
+        this.timerInterval = setInterval(() => {
+          this.remainingTime--;
+          if (this.remainingTime === 0) {
+            clearInterval(this.timerInterval);
+            this.timerRunning = false;
+          }
+        }, 1000);
+      }
     },
 
     pauseTimer() {
       clearInterval(this.timerInterval);
+      this.isTimerunning = false;
     },
 
     resetTimer() {
       clearInterval(this.timerInterval);
       this.remainingTime = this.duration;
+      this.isTimerunning = false;
     },
 
     checkMode(mode) {
@@ -79,6 +91,9 @@ export default {
         return `${minutes} : ${String(seconds).padStart(2, "0")}`;
       };
     },
+    progress() {
+      return 1 - this.remainingTime / this.duration;
+    },
   },
 };
 </script>
@@ -108,5 +123,38 @@ export default {
 
 .control {
   margin: 16px;
+}
+.start-btn,
+.pause-btn,
+.reset-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.start-btn:hover,
+.pause-btn:hover,
+.reset-btn:hover {
+  background-color: #45a049;
+}
+
+.start-btn:focus,
+.pause-btn:focus,
+.reset-btn:focus {
+  outline: none;
+}
+
+.start-btn:active,
+.pause-btn:active,
+.reset-btn:active {
+  background-color: #3e8e41;
+}
+.control button:not(:last-child) {
+  margin-right: 8px;
 }
 </style>
