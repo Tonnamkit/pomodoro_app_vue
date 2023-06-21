@@ -1,28 +1,26 @@
 <template>
   <div class="timer">
     <div class="timer-circle" :style="circleStyle">
-      <CircleProgress :progress="progress" />
       <div class="timer-label">{{ formatTime(remainingTime) }}</div>
     </div>
     <div class="control">
-      <button class="start-btn" @click="startTimer()">
+      <button class="start-btn" @click="startTimer()" :disabled="isTimerunning">
         {{ Textbtn }}
       </button>
-      <button class="pause-btn" @click="pauseTimer()">Pause</button>
+      <button class="pause-btn" @click="pauseTimer()" :disabled="!isTimerunning">Pause</button>
       <button class="reset-btn" @click="resetTimer()">Reset</button>
     </div>
   </div>
 </template>
 
 <script>
-import CircleProgress from "../CircleProgress.vue";
 import nav_bar from "./Navbar.vue";
 
 export default {
   name: "Timer_UI",
   props: ["mode"],
   components() {
-    nav_bar, CircleProgress;
+    nav_bar
   },
   data() {
     return {
@@ -44,9 +42,11 @@ export default {
         this.isTimerunning = true;
         this.timerInterval = setInterval(() => {
           this.remainingTime--;
+          this.Textbtn = "Resume"
           if (this.remainingTime === 0) {
             clearInterval(this.timerInterval);
             this.isTimerunning = false;
+            this.Textbtn = "Start";
           }
         }, 1000);
       }
@@ -61,6 +61,7 @@ export default {
       clearInterval(this.timerInterval);
       this.isTimerunning = false;
       this.remainingTime = this.duration;
+      this.Textbtn = "Start";
     },
 
     checkMode(mode) {
@@ -90,9 +91,6 @@ export default {
         const seconds = timeInSeconds % 60;
         return `${minutes} : ${String(seconds).padStart(2, "0")}`;
       };
-    },
-    progress() {
-      return 1 - this.remainingTime / this.duration;
     },
   },
 };
@@ -141,12 +139,14 @@ export default {
 .pause-btn:hover,
 .reset-btn:hover {
   background-color: #45a049;
+  transition: 0.3s;
 }
 
 .start-btn:focus,
 .pause-btn:focus,
 .reset-btn:focus {
   outline: none;
+  transition: 0.3s;
 }
 
 .start-btn:active,
@@ -154,6 +154,18 @@ export default {
 .reset-btn:active {
   background-color: #3e8e41;
 }
+.start-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #ccc;
+}
+
+.pause-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #ccc;
+}
+
 .control button:not(:last-child) {
   margin-right: 8px;
 }
