@@ -1,5 +1,6 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = {
-  publicPath: '/pomodoro_app_vue/'
-  
+  publicPath: process.env.NODE_ENV === 'production'
+  ? './'
+  : '/'
 }
